@@ -79,7 +79,7 @@ public class BillOrders
 {
 	public int BillID {get;set;}
 	public string WaiterName {get;set;}
-	public BillItems Orders {get;set;}
+//	public BillItems Orders {get;set;}
 	public IEnumerable Orders {get;set;}
 	
 }
