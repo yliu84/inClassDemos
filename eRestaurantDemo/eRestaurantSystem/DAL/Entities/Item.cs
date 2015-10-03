@@ -32,6 +32,7 @@ namespace eRestaurantSystem.DAL.Entities
         public int MenuCategoryID { get; set; }
 
         public virtual MenuCategory Category { get; set; }
+        public virtual ICollection<BillItem> BillItems { get; set; }
 
         public Item()
         {
