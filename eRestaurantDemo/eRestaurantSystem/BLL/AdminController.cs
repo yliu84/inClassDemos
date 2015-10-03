@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 #region Additional Namespaces
 using eRestaurantSystem.DAL;
 using eRestaurantSystem.DAL.Entities;
+using eRestaurantSystem.DAL.DTOs;
+using eRestaurantSystem.DAL.POCOs;
 using System.ComponentModel; // Object Data Source
 #endregion
 
@@ -44,6 +46,40 @@ namespace eRestaurantSystem.BLL
                               where item.EventCode.Equals(eventcode)
                              orderby item.CustomerName, item.ReservationDate
                              select item;
+                return results.ToList();
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Select,false)]
+        public List<ReservationByDate> GetReservationByDate(string reservationDate)
+        {
+            using (var context = new eRestaurantContext())
+            {
+                //Linq is not very playful or cooperation with DateTime
+
+                //Extract the year, months,and day ourselves out of the passed parameter value
+                int theYear = (DateTime.Parse(reservationDate).Year);
+                int theMonth = (DateTime.Parse(reservationDate).Month);
+                int theDay = (DateTime.Parse(reservationDate).Day);
+
+                var results = from eventItem in context.SpecialEvents
+                              orderby eventItem.Description
+                              select new ReservationByDate() //a new instance for each specialevent row on the table
+                              {
+                                  Description = eventItem.Description,
+                                  Reservations = from row in eventItem.Reservations
+                                                 where row.ReservationDate.Year == theYear
+                                                 && row.ReservationDate.Month == theMonth
+                                                 && row.ReservationDate.Day == theDay
+                                                 select new ReservationDetail() // a new for each reservation of a particular specialevent code
+                                                 {
+                                                     CustomerName = row.CustomerName,
+                                                     ReservationDate = row.ReservationDate,
+                                                     NumberInParty = row.NumberInParty,
+                                                     ContactPhone = row.ContactPhone,
+                                                     ReservationStatus = row.ReservationStatus
+                                                 }
+                              };
                 return results.ToList();
             }
         }
