@@ -1,5 +1,8 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="FrontDesk.aspx.cs" Inherits="UXPages_FrontDesk" %>
 
+<%@ Register Src="~/UserControl/MessageUserControl.ascx" TagPrefix="uc1" TagName="MessageUserControl" %>
+
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
      <div class="well">
@@ -34,7 +37,7 @@
     </div>
 
     <!--this source is to display the Seating summary-->
-
+    <uc1:MessageUserControl runat="server" ID="MessageUserControl" />
     <div class="col-md-7">
         <details open>
             <summary>Tables</summary>
@@ -47,7 +50,8 @@
             <asp:GridView ID="SeatingGridView" runat="server" AutoGenerateColumns="False"
                     CssClass="table table-hover table-striped table-condensed"
                     DataSourceID="SeatingObjectDataSource" 
-                    ItemType="eRestaurantSystem.DAL.POCOs.SeatingSummary">
+                    ItemType="eRestaurantSystem.DAL.POCOs.SeatingSummary" 
+                    OnSelectedIndexChanging="SeatingGridView_SelectedIndexChanging">
                 <Columns>
                     <asp:CheckBoxField DataField="Taken" HeaderText="Taken" SortExpression="Taken" ItemStyle-HorizontalAlign="Center"></asp:CheckBoxField>
                     <asp:TemplateField HeaderText="Table" SortExpression="Table" ItemStyle-HorizontalAlign="Center">
