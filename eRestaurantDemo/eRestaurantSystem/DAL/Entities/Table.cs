@@ -20,7 +20,7 @@ namespace eRestaurantSystem.DAL.Entities
         public bool Smoking { get; set; }
         [Required]
         public int Capacity { get; set; }
-        public bool Avaiable { get; set; }
+        public bool Available { get; set; }
 
         //Navigation Properties
         //the Reservation table (SQL) is a many to many
@@ -41,7 +41,7 @@ namespace eRestaurantSystem.DAL.Entities
 
         public Table()
         {
-            Avaiable = true;
+            Available = true;
             Smoking = false;
         }
 

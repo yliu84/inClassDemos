@@ -51,4 +51,67 @@ public partial class UXPages_FrontDesk : System.Web.UI.Page
             }, "Customer Seated", "New walk-in customer has been saved");
     
     }
+
+    protected void ReservationSummaryListView_ItemCommand(object sender, ListViewCommandEventArgs e)
+    {
+        //this is the method which will gather the seating
+        //information for reserations and pass to the BLL
+        //for processing
+
+        //no processing will be done unless the e.CommandName is 
+        //equal to "Seat"
+        if (e.CommandName.Equals("Seat"))
+        {
+            //execution of the code will under the control
+            //of the MessageUserControl
+            MessageUserControl.TryRun(() =>
+                {
+                    //gather the necessary data from the web controls
+                    int reservationid = int.Parse(e.CommandArgument.ToString());
+                    int waiterid = int.Parse(WaiterDropDownList.SelectedValue);
+                    DateTime when = Mocker.MockDate.Add(Mocker.MockTime);
+
+                    //we need to collect possible multiple values from the ListBox control which
+                    //contains the selected tables to be assigned to this group of customers
+                    List<byte> selectedTables = new List<byte>();
+
+                    //walk through the listBox row by row
+                    foreach (ListItem item_tableid in ReservationTableListBox.Items)
+                    {
+                        if (item_tableid.Selected)
+                        {
+                            selectedTables.Add(byte.Parse(item_tableid.Text.Replace("Table ", "")));
+                        }
+                    }
+
+                    //with all data gathered, connect to your library controller,
+                    //and send data to processing
+
+                    AdminController sysmgr = new AdminController();
+                    sysmgr.SeatCustomer(when, reservationid, selectedTables, waiterid);
+
+                    //refresh the page 
+                    SeatingGridView.DataBind();
+                    ReservationsRepeater.DataBind();
+                    ReservationTableListBox.DataBind();
+
+                }, "Customer Seated","Reservation customer has arrived and has been seated."
+                );
+        }
+
+    }
+
+    protected bool ShowReservationSeating()
+    {
+        bool anyReservationToday = false;
+        //call the BLL to indicate if there any reservations today
+        MessageUserControl.TryRun(() =>
+            {
+                DateTime when = Mocker.MockDate.Add(Mocker.MockTime);
+                AdminController sysmgr = new AdminController();
+                anyReservationToday = sysmgr.ReservationsForToday(when);
+            }
+            ); 
+        return anyReservationToday;
+    }
 }
