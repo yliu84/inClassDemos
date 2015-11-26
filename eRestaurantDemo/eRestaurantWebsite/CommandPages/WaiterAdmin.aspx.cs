@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using eRestaurantSystem.BLL; //controller
 using eRestaurantSystem.DAL.Entities; //entity
 using EatIn.UI; //delegate processRequest
+using Microsoft.AspNet.Identity; //extension method of aspNet.Identity -- GetUserName
 #endregion
 
 public partial class CommandPages_WaiterAdmin : System.Web.UI.Page
@@ -17,8 +18,21 @@ public partial class CommandPages_WaiterAdmin : System.Web.UI.Page
     {
         if (!Page.IsPostBack)
         {
-            HireDate.Text = DateTime.Today.ToShortDateString();
-            RefreshWaiterList("0"); //set drop down list to the prompt
+            //have you logged in yet?
+            if (!Request.IsAuthenticated)
+            {
+                //NO
+                Response.Redirect("~/Account/Login.aspx");
+            }
+            else
+            {
+                //get the current user name
+                currentLogin.Text = User.Identity.GetUserName();
+
+                HireDate.Text = DateTime.Today.ToShortDateString();
+                RefreshWaiterList("0"); //set drop down list to the prompt
+            }
+            
         }
     }
 
